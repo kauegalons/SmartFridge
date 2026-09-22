@@ -16,8 +16,9 @@ public class FoodItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
+    @Enumerated(EnumType.STRING)
     private FoodCategory category;
-    private int quantity;
+    private Integer quantity;
     private LocalDate expirationDate;
 
     public Long getId() {
@@ -44,11 +45,11 @@ public class FoodItem {
         this.category = category;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 
