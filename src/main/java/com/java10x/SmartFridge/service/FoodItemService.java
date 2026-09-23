@@ -1,5 +1,7 @@
 package com.java10x.SmartFridge.service;
 
+import com.java10x.SmartFridge.dto.FoodDTO;
+import com.java10x.SmartFridge.mapper.FoodMapper;
 import com.java10x.SmartFridge.model.FoodItem;
 import com.java10x.SmartFridge.repository.FoodItemRepository;
 import org.springframework.stereotype.Service;
@@ -11,45 +13,65 @@ import java.util.Optional;
 public class FoodItemService {
 
     private final FoodItemRepository foodItemRepository;
+    private final FoodMapper foodMapper;
 
-    public FoodItemService(FoodItemRepository foodItemRepository) {
+    public FoodItemService(FoodItemRepository foodItemRepository, FoodMapper foodMapper) {
         this.foodItemRepository = foodItemRepository;
+        this.foodMapper = foodMapper;
     }
 
-    public FoodItem create(FoodItem foodItem) {
-        return foodItemRepository.save(foodItem);
+    public FoodDTO createFood(FoodDTO food) {
+        FoodItem foodItem = foodMapper.map(food);
+        foodItem = foodItemRepository.save(foodItem);
+        return foodMapper.map(foodItem);
     }
 
-    public List<FoodItem> list() {
-        return foodItemRepository.findAll();
+    public List<FoodDTO> listAllFood() {
+
+        return foodItemRepository.findAll()
+                .stream()
+                .map(foodMapper::map)
+                .toList();
+
     }
 
-    public Optional<FoodItem> findById(Long id) {
-        return foodItemRepository.findById(id);
+    public FoodDTO findById(Long id) {
+        return foodItemRepository.findById(id)
+                .map(foodMapper::map)
+                .orElse(null);
     }
 
 
-    public void delete(FoodItem foodItem) {
-        foodItemRepository.delete(foodItem);
-    }
-
-    public FoodItem update(Long id, FoodItem foodItem) {
-        FoodItem saved = foodItemRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Food item not found with id: " + id));
-
-        if(foodItem.getName() != null) {
-            saved.setName(foodItem.getName());
+    public boolean deleteFood(Long id) {
+        if (!foodItemRepository.existsById(id)) {
+            return false;
         }
-        if(foodItem.getCategory() != null) {
-            saved.setCategory(foodItem.getCategory());
-        }
-        if(foodItem.getQuantity() != null) {
-            saved.setQuantity(foodItem.getQuantity());
-        }
-        if (foodItem.getExpirationDate() != null) {
-            saved.setExpirationDate(foodItem.getExpirationDate());
-        }
+        foodItemRepository.deleteById(id);
+        return true;
+    }
 
-        return foodItemRepository.save(saved);
+    public FoodDTO updateFood(Long id, FoodDTO food) {
+         Optional<FoodItem> found = foodItemRepository.findById(id);
+         if (found.isEmpty()) {
+            return  null;
+         }
+
+         FoodItem saved = found.get();
+
+         if(food.getName() != null) {
+             saved.setName(food.getName());
+         }
+         if(food.getCategory() != null) {
+             saved.setCategory(food.getCategory());
+         }
+         if(food.getQuantity() != null) {
+             saved.setQuantity(food.getQuantity());
+         }
+         if (food.getExpirationDate() != null) {
+             saved.setExpirationDate(food.getExpirationDate());
+         }
+
+         return foodMapper.map(foodItemRepository.save(saved));
+
     }
 }
