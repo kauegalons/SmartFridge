@@ -166,7 +166,7 @@ These are the decisions worth explaining, since they are the point of the exerci
 - Return `201 Created` on `POST`, `204 No Content` on `DELETE`
 - Automated tests for the service and controller layers
 - Expiration tracking and alerts for items close to their expiration date
-- AI-powered recipe generation with LangChain4j, based on available ingredients
+- AI-powered recipe generation with Spring AI, based on available ingredients, calling the model through `WebClient`
 - Recipe suggestions filtered by dietary preferences and restrictions
 
 ## Known Gaps
@@ -177,7 +177,7 @@ Being a study project, some rough edges are intentional and tracked above rather
 - Missing fields on `POST` return `500` instead of `400`. The schema declares `name`, `category`, `quantity` and `expiration_date` as `NOT NULL`, but nothing rejects nulls before the insert, so the database constraint is what fails and the error surfaces as a server fault. Fixing this needs more than annotations on `FoodDTO`: `null` means "field missing, reject" on `POST` and "field omitted, keep the stored value" on `PATCH`, so a single validated DTO cannot express both. The way out is either validation groups or separate create/update DTOs. The same applies to `name` exceeding `VARCHAR(255)`.
 - Error responses return plain text while successful responses return JSON
 - No automated test coverage yet
-- `webflux` and `webmvc` starters are both declared, though only MVC is used
+- `webflux` is declared but not used yet. It stays because the planned Spring AI integration calls the model through `WebClient`, and streamed responses arrive as a `Flux`. The web layer itself runs on MVC: with both starters present, Spring Boot picks MVC.
 
 ## License
 
