@@ -127,7 +127,7 @@ These are the decisions worth explaining, since they are the point of the exerci
 
 ## Roadmap
 
-- Input validation (`spring-boot-starter-validation`, constraints on the DTO, `@Valid`)
+- Input validation (`spring-boot-starter-validation`, constraints on the DTO, `@Valid`), splitting `FoodDTO` into separate create/update/response DTOs so `POST` and `PATCH` can carry different rules
 - Centralized error handling with a consistent error response format
 - Return `201 Created` on `POST`, `204 No Content` on `DELETE`
 - Flyway migrations and a persistent database, replacing Hibernate schema generation
@@ -141,6 +141,7 @@ These are the decisions worth explaining, since they are the point of the exerci
 Being a study project, some rough edges are intentional and tracked above rather than hidden:
 
 - No request validation, so invalid data (empty names, negative quantities) is accepted
+- Missing fields on `POST` return `500` instead of `400`. The schema declares `name`, `category`, `quantity` and `expiration_date` as `NOT NULL`, but nothing rejects nulls before the insert, so the database constraint is what fails and the error surfaces as a server fault. Fixing this needs more than annotations on `FoodDTO`: `null` means "field missing, reject" on `POST` and "field omitted, keep the stored value" on `PATCH`, so a single validated DTO cannot express both. The way out is either validation groups or separate create/update DTOs. The same applies to `name` exceeding `VARCHAR(255)`.
 - Error responses return plain text while successful responses return JSON
 - No automated test coverage yet
 - `webflux` and `webmvc` starters are both declared, though only MVC is used

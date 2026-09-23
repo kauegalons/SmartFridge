@@ -7,19 +7,29 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "food_item")
+@Table(name = "foods")
 @NoArgsConstructor
 @AllArgsConstructor
 public class FoodItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "name")
     private String name;
+
     @Enumerated(EnumType.STRING)
+    @Column(name = "category")
     private FoodCategory category;
+
+    @Column(name = "quantity")
     private Integer quantity;
+
+    @Column(name = "expiration_date")
     private LocalDate expirationDate;
+
 
     public Long getId() {
         return id;
