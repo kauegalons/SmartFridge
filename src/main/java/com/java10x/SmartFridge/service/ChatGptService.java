@@ -1,6 +1,7 @@
 package com.java10x.SmartFridge.service;
 
 import com.java10x.SmartFridge.dto.OpenAiRequest;
+import tools.jackson.databind.JsonNode;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -23,6 +24,17 @@ public class ChatGptService {
                 .uri("/responses")
                 .bodyValue(request)
                 .retrieve()
-                .bodyToMono(String.class);
+                .bodyToMono(JsonNode.class)
+                .map(json -> {
+                    String recipe = json.path("output").path(0)
+                            .path("content").path(0)
+                            .path("text")
+                            .asString();
+
+                    if (recipe.isBlank()) {
+                        return "Nenhuma receita pôde ser gerada com os ingredientes disponíveis.";
+                    }
+                    return recipe;
+                });
     }
 }
