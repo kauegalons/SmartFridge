@@ -7,8 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class FoodMapper {
 
-    //from dto to model
-    public FoodItem map(FoodDTO foodDTO) {
+    public FoodItem toEntity(FoodDTO foodDTO) {
         FoodItem foodItem = new FoodItem();
         foodItem.setName(foodDTO.getName());
         foodItem.setCategory(foodDTO.getCategory());
@@ -18,7 +17,7 @@ public class FoodMapper {
         return foodItem;
     }
 
-    public FoodDTO map(FoodItem foodItem){
+    public FoodDTO toDto(FoodItem foodItem){
         FoodDTO foodDTO = new FoodDTO();
         foodDTO.setId(foodItem.getId());
         foodDTO.setName(foodItem.getName());

@@ -9,16 +9,16 @@ import org.springframework.web.reactive.function.client.WebClient;
 @Configuration
 public class WebClientConfig {
 
-    @Value("${chat-gpt.base.url}")
-    private String chatGptUrlApi;
+    @Value("${openai.api-url}")
+    private String openAiApiUrl;
 
-    @Value("${api.key}")
+    @Value("${openai.api-key}")
     private String apiKey;
 
     @Bean
     public WebClient webClient (WebClient.Builder builder) {
         return builder
-                .baseUrl(chatGptUrlApi)
+                .baseUrl(openAiApiUrl)
                 .defaultHeader(HttpHeaders.AUTHORIZATION, "Bearer " + apiKey)
                 .build();
     }

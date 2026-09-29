@@ -21,23 +21,23 @@ public class FoodItemService {
     }
 
     public FoodDTO createFood(FoodDTO food) {
-        FoodItem foodItem = foodMapper.map(food);
+        FoodItem foodItem = foodMapper.toEntity(food);
         foodItem = foodItemRepository.save(foodItem);
-        return foodMapper.map(foodItem);
+        return foodMapper.toDto(foodItem);
     }
 
     public List<FoodDTO> listAllFood() {
 
         return foodItemRepository.findAll()
                 .stream()
-                .map(foodMapper::map)
+                .map(foodMapper::toDto)
                 .toList();
 
     }
 
     public FoodDTO findById(Long id) {
         return foodItemRepository.findById(id)
-                .map(foodMapper::map)
+                .map(foodMapper::toDto)
                 .orElse(null);
     }
 
@@ -56,22 +56,22 @@ public class FoodItemService {
             return  null;
          }
 
-         FoodItem saved = found.get();
+         FoodItem existingFood = found.get();
 
          if(food.getName() != null) {
-             saved.setName(food.getName());
+             existingFood.setName(food.getName());
          }
          if(food.getCategory() != null) {
-             saved.setCategory(food.getCategory());
+             existingFood.setCategory(food.getCategory());
          }
          if(food.getQuantity() != null) {
-             saved.setQuantity(food.getQuantity());
+             existingFood.setQuantity(food.getQuantity());
          }
          if (food.getExpirationDate() != null) {
-             saved.setExpirationDate(food.getExpirationDate());
+             existingFood.setExpirationDate(food.getExpirationDate());
          }
 
-         return foodMapper.map(foodItemRepository.save(saved));
+         return foodMapper.toDto(foodItemRepository.save(existingFood));
 
     }
 }

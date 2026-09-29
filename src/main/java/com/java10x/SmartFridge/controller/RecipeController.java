@@ -1,7 +1,7 @@
 package com.java10x.SmartFridge.controller;
 
 import com.java10x.SmartFridge.dto.FoodDTO;
-import com.java10x.SmartFridge.service.ChatGptService;
+import com.java10x.SmartFridge.service.OpenAiService;
 import com.java10x.SmartFridge.service.FoodItemService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,21 +16,21 @@ import java.util.List;
 @RequestMapping("/recipe")
 public class RecipeController {
 
-    private FoodItemService foodItemService;
+    private final FoodItemService foodItemService;
 
-    private ChatGptService chatGptService;
+    private final OpenAiService openAiService;
 
-    public RecipeController(FoodItemService foodItemService, ChatGptService chatGptService) {
+    public RecipeController(FoodItemService foodItemService, OpenAiService openAiService) {
         this.foodItemService = foodItemService;
-        this.chatGptService = chatGptService;
+        this.openAiService = openAiService;
     }
 
 
     @PostMapping
     public Mono<ResponseEntity<String>> generateRecipe(){
-        List<FoodDTO> foodsDTO = foodItemService.listAllFood();
+        List<FoodDTO> foodItems = foodItemService.listAllFood();
 
-        return chatGptService.generateRecipe(foodsDTO)
+        return openAiService.generateRecipe(foodItems)
                 .map(recipe -> ResponseEntity.ok().body(recipe))
                 .defaultIfEmpty(ResponseEntity.status(HttpStatus.NO_CONTENT).build());
     }

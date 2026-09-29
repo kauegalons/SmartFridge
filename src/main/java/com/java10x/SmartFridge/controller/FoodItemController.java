@@ -18,13 +18,13 @@ public class FoodItemController {
     }
 
     @PostMapping
-    public ResponseEntity<FoodDTO> createFoodItem(@RequestBody FoodDTO food) {
+    public ResponseEntity<FoodDTO> createFood(@RequestBody FoodDTO food) {
         FoodDTO saved = foodItemService.createFood(food);
         return ResponseEntity.ok(saved);
     }
 
     @GetMapping
-    public ResponseEntity<List<FoodDTO>> getAllFoodItems(){
+    public ResponseEntity<List<FoodDTO>> getAllFood(){
         List<FoodDTO> foodList = foodItemService.listAllFood();
         if(foodList.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -43,20 +43,20 @@ public class FoodItemController {
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteFoodItem(@PathVariable Long id) {
+    public ResponseEntity<?> deleteFood(@PathVariable Long id) {
         if(!foodItemService.deleteFood(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Food item not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Food with id " + id + " not found.");
         }
-        return ResponseEntity.ok("Food item deleted successfully");
+        return ResponseEntity.ok("Food item deleted.");
 
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updateFood(@PathVariable Long id, @RequestBody FoodDTO food) {
-        FoodDTO foodUpdated = foodItemService.updateFood(id, food);
-        if (foodUpdated == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Food item not found");
+        FoodDTO updatedFood = foodItemService.updateFood(id, food);
+        if (updatedFood == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Food with id " + id + " not found.");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(foodUpdated);
+        return ResponseEntity.status(HttpStatus.OK).body(updatedFood);
     }
 }
